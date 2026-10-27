@@ -1,36 +1,15 @@
-#!/usr/bin/env bash
-set -u
-
-echo "Network Diagnostics"
-echo "-------------------"
-
-echo
-echo "Hostname:"
-hostname
-
-echo
-echo "IP addresses:"
-ip -brief address || true
-
-echo
-echo "Routing table:"
-ip route || true
-
-echo
-echo "DNS configuration:"
-if [[ -f /etc/resolv.conf ]]; then
-    cat /etc/resolv.conf
-else
-    echo "DNS configuration file not found."
-fi
-
-echo
-echo "Network connectivity test:"
-if command -v ping >/dev/null 2>&1; then
-    ping -c 2 -W 2 1.1.1.1 || true
-else
-    echo "ping command is not installed."
-fi
-
-echo
-echo "Diagnostics completed."
+#!/usr/bin/env bash 
+echo "Hostname:" 
+hostname 
+echo 
+echo "IP addresses:" 
+ip -brief address 2>/dev/null || hostname -I 
+echo 
+echo "Routing table:" 
+ip route 2>/dev/null || route -n 2>/dev/null || true 
+echo 
+echo "DNS lookup:" 
+getent hosts example.com || echo "DNS lookup failed or network unavailable" 
+echo 
+echo "SSH client version:" 
+ssh -V 2>&1 
